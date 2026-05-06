@@ -1,43 +1,69 @@
 # chainwatch
 
-chainwatch is a Go project for blockchain tooling. It focuses on this technical goal: Detect reorgs, finality thresholds, and watcher alerts.
+`chainwatch` is a focused Go codebase around detect reorgs, finality thresholds, and watcher alerts. It is meant to be easy to inspect, run, and extend without a hosted service.
 
-## Why it exists
+## Chainwatch Walkthrough
 
-Small engineering tools are easiest to trust when their rules are explicit, testable, and cheap to run locally. This repository packages a focused model with fixture data and a local verification path so behavior can be reviewed without external services.
+I would read the project from the outside in: command, fixture, model, then roadmap. That keeps the blockchain tooling idea grounded in files that can be checked locally.
 
-## Features
+## Capabilities
 
-- Deterministic policy scoring over fixture scenarios.
-- Clear accept or review decisions based on a documented threshold.
-- A command-line or local test path for quick validation.
-- Golden fixture data for repeatable checks.
-- Minimal dependencies and a compact project layout.
+- Includes extended examples for invariant checks, including `surge` and `degraded`.
+- Documents settlement rules tradeoffs in `docs/operations.md`.
+- Runs locally with a single verification command and no external credentials.
+- Stores project constants and verification metadata in `metadata/project.json`.
+- Adds a repository audit script that checks structure before running the language verifier.
 
-## Architecture Notes
+## Reason For The Project
 
-The core module exposes a small scoring API. Inputs are simple numeric signals: demand, capacity, latency, risk, and weight. The score uses a threshold of 168, risk penalty 5, latency penalty 2, and weight bonus 4. Tests exercise the public API against the fixture cases in `fixtures/cases.csv`.
+The repository exists to keep a technical idea small enough to reason about. The implementation avoids external dependencies where possible, then uses fixtures to make changes easy to review.
 
-## Setup
+## Where Things Live
 
-Install the Go toolchain and run commands from the repository root.
+- `policy`: Go package with the core model
+- `cmd`: small command entry point
+- `fixtures`: compact golden scenarios
+- `examples`: expanded scenario set
+- `metadata`: project constants and verification metadata
+- `docs`: operations and extension notes
+- `scripts`: local verification and audit commands
+- `go.mod`: Go module metadata
 
-## Usage
+## How It Is Put Together
+
+The project is organized around a compact model rather than a large framework. Inputs are scored, classified, and checked against golden fixtures. The constants live in code and are mirrored in metadata so documentation drift is easy to catch. The Go layout uses small packages and table-oriented tests so the behavior stays easy to follow.
+
+## Command Examples
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify.ps1
 ```
 
-The verification script builds or runs the project and checks the fixture decisions.
+This runs the language-level build or test path against the compact fixture set.
 
-## Tests
+## Data Notes
+
+`surge` is the first example I would inspect because it lands on the `accept` path with a score of 240. The broader file also keeps `degraded` at 13 and `surge` at 240, which gives the model a useful low-to-high spread.
+
+## Check The Work
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/audit.ps1
 ```
 
-## Limitations And Roadmap
+The audit command checks repository structure and README constraints before it delegates to the verifier.
 
-- The fixture set is intentionally small so it can be audited by hand.
-- Future work could add richer domain-specific input adapters.
-- The model is a local demonstration and does not claim production use.
+## Tradeoffs
+
+This code is local-first. It makes no claim about deployed usage and avoids credentials, hosted state, and environment-specific setup.
+
+## Possible Extensions
+
+- Add a short report command that prints the score breakdown for a single scenario.
+- Add malformed input fixtures so the failure path is as visible as the happy path.
+- Split the scoring constants into a typed configuration object and validate it before use.
+- Add one more blockchain tooling fixture that focuses on a malformed or borderline input.
+
+## Getting It Running
+
+Clone the repository, enter the directory, and run the verifier. No database server, cloud account, or token is required.
