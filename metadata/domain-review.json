@@ -1,0 +1,73 @@
+{
+  "repo": "chainwatch",
+  "language": "Go",
+  "category": "Blockchain tooling",
+  "goal": "Detect reorgs, finality thresholds, and watcher alerts.",
+  "review_model": {
+    "terms": [
+      "event finality",
+      "nonce pressure",
+      "settlement risk",
+      "proof depth"
+    ],
+    "lanes": [
+      "ship",
+      "watch",
+      "hold"
+    ],
+    "score": "signal * 2 + slack + confidence - drag * 3",
+    "purpose": "surface the domain-specific cases that need the most careful review"
+  },
+  "cases": [
+    {
+      "name": "baseline",
+      "focus": "event finality",
+      "signal": 66,
+      "slack": 26,
+      "drag": 31,
+      "confidence": 64,
+      "score": 129,
+      "lane": "watch"
+    },
+    {
+      "name": "stress",
+      "focus": "nonce pressure",
+      "signal": 51,
+      "slack": 24,
+      "drag": 22,
+      "confidence": 49,
+      "score": 109,
+      "lane": "watch"
+    },
+    {
+      "name": "edge",
+      "focus": "settlement risk",
+      "signal": 47,
+      "slack": 53,
+      "drag": 9,
+      "confidence": 71,
+      "score": 191,
+      "lane": "ship"
+    },
+    {
+      "name": "recovery",
+      "focus": "proof depth",
+      "signal": 74,
+      "slack": 46,
+      "drag": 29,
+      "confidence": 64,
+      "score": 171,
+      "lane": "ship"
+    },
+    {
+      "name": "stale",
+      "focus": "event finality",
+      "signal": 55,
+      "slack": 36,
+      "drag": 16,
+      "confidence": 87,
+      "score": 185,
+      "lane": "ship"
+    }
+  ]
+}
